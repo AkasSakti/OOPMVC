@@ -17,19 +17,40 @@ class AuthController {
     }
     
     public function register() {
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $foto = '';
+            if(isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $fileExtension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+                $newFileName = time() . '_' . uniqid() . '.' . $fileExtension;
+                $targetDir = 'uploads/profile/';
+                $targetFile = $targetDir . $newFileName;
+                
+                if (!is_dir($targetDir)) {
+                    mkdir($targetDir, 0777, true);
+                }
+                
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+                    $foto = $targetFile;
+                }
+            }
+    
             $data = [
                 'nim' => $_POST['nim'],
                 'nama' => $_POST['nama'],
                 'email' => $_POST['email'],
+                'foto' => $foto,
                 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
             ];
             
-            if($this->model->register($data)) {
+            if ($this->model->register($data)) {
                 header('Location: index.php?c=Auth&a=loginPage');
+                exit;
             } else {
-                echo "Registrasi gagal!";
+                require_once 'views/register.php';
+                echo "<script>alert('Gagal mendaftar');</script>";
             }
+        } else {
+            require_once 'views/register.php';
         }
     }
     
@@ -112,19 +133,45 @@ public function edit() {
 }
 
 public function update() {
-    if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Ambil foto yang sudah ada sebagai default
+        $foto = $_POST['foto_lama'] ?? '';
+        
+        // Proses jika ada upload foto baru
+        if(isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $fileExtension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+            $newFileName = time() . '_' . uniqid() . '.' . $fileExtension;
+            $targetDir = 'uploads/profile/';
+            $targetFile = $targetDir . $newFileName;
+            
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            
+            if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+                // Hapus foto lama jika ada dan bukan foto default
+                if(!empty($_POST['foto_lama']) && file_exists($_POST['foto_lama'])) {
+                    unlink($_POST['foto_lama']);
+                }
+                $foto = $targetFile;
+            }
+        }
+
         $data = [
             'id_user' => $_POST['id_user'],
             'nim' => $_POST['nim'],
             'nama' => $_POST['nama'],
             'email' => $_POST['email'],
+            'foto' => $foto,
             'password' => $_POST['password']
         ];
         
-        if($this->model->update($data)) {
+        if ($this->model->update($data)) {
             header('Location: index.php?c=Auth&a=dashboard');
+            exit;
         } else {
-            echo "Update gagal!";
+            header('Location: index.php?c=Auth&a=edit&id=' . $_POST['id_user']);
+            exit;
         }
     }
 }

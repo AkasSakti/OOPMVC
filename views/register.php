@@ -13,7 +13,7 @@
                         <h3>Register</h3>
                     </div>
                     <div class="card-body">
-                        <form action="index.php?c=Auth&a=register" method="post">
+                        <form action="index.php?c=Auth&a=register" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="nim" class="form-label">NIM</label>
                                 <input type="text" class="form-control" id="nim" name="nim" required>
@@ -27,10 +27,16 @@
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-3">
+                                <label for="foto" class="form-label">Foto Profil</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                <small class="text-muted">Debug: pastikan field ini terisi</small>
+                            </div>
+                            <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Register</button>
+                            <a href="index.php?c=Auth&a=loginPage" class="btn btn-secondary">Login</a>
                         </form>
                     </div>
                 </div>

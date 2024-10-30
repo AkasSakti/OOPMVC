@@ -2,17 +2,26 @@
 class Pemakai extends Database {
     
     public function register($data) {
-        $query = "INSERT INTO pemakai (nim, nama, email, password) 
-                  VALUES (:nim, :nama, :email, :password)";
-                  
-        $stmt = $this->db->prepare($query);
-        
-        return $stmt->execute([
-            ':nim' => $data['nim'],
-            ':nama' => $data['nama'],
-            ':email' => $data['email'],
-            ':password' => $data['password']
-        ]);
+        try {
+            $query = "INSERT INTO pemakai (nim, nama, email, foto, password) 
+                      VALUES (:nim, :nama, :email, :foto, :password)";
+                      
+            $stmt = $this->db->prepare($query);
+            
+            $params = [
+                ':nim' => $data['nim'],
+                ':nama' => $data['nama'],
+                ':email' => $data['email'],
+                ':foto' => $data['foto'],
+                ':password' => $data['password']
+            ];
+            
+            return $stmt->execute($params);
+        } catch(PDOException $e) {
+            // Untuk debugging
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
     }
 
     public function login($nim, $password) {
@@ -84,7 +93,8 @@ class Pemakai extends Database {
             $query = "UPDATE pemakai SET 
                       nim = :nim,
                       nama = :nama,
-                      email = :email
+                      email = :email,
+                      foto = :foto
                       WHERE id_user = :id_user";
             
             $stmt = $this->db->prepare($query);
@@ -92,6 +102,7 @@ class Pemakai extends Database {
                 ':nim' => $data['nim'],
                 ':nama' => $data['nama'],
                 ':email' => $data['email'],
+                ':foto' => $data['foto'],
                 ':id_user' => $data['id_user']
             ]);
         } else {
@@ -99,6 +110,7 @@ class Pemakai extends Database {
                       nim = :nim,
                       nama = :nama,
                       email = :email,
+                      foto = :foto,
                       password = :password
                       WHERE id_user = :id_user";
             
@@ -107,6 +119,7 @@ class Pemakai extends Database {
                 ':nim' => $data['nim'],
                 ':nama' => $data['nama'],
                 ':email' => $data['email'],
+                ':foto' => $data['foto'],
                 ':password' => password_hash($data['password'], PASSWORD_DEFAULT),
                 ':id_user' => $data['id_user']
             ]);
