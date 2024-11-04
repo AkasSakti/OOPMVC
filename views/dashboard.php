@@ -10,7 +10,14 @@
             <h2>Data Pemakai</h2>
             <a href="index.php?c=Auth&a=logout" class="btn btn-danger">Logout</a>
         </div>
-
+<!-- Tambahkan Link ke Index Barang -->
+        <div class="mb-3">
+            <a href="index.php?c=Barang&a=index" class="btn btn-primary">Lihat Data Barang</a>
+        </div>
+ <!-- Tambahkan Link ke Index Transaksi -->
+ <div class="mb-3">
+            <a href="index.php?c=Transaksi&a=index" class="btn btn-success">Lihat Data Transaksi</a>
+        </div>
         <!-- Informasi Total Data -->
         <div class="alert alert-info">
             Total Data: <?php echo $totalData; ?> data
