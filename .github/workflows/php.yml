@@ -58,6 +58,15 @@ jobs:
         run: |
           if [ -d "tests" ]; then
             ./vendor/bin/phpunit --configuration phpunit.xml
+
+      # Deploy pakai FTP (contoh 000webhost / cPanel)
+      - name: Deploy to Hosting
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /public_html/OOPMVC/
           else
             echo "No tests directory found, skipping..."
           fi
